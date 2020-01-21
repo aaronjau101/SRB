@@ -16,7 +16,7 @@ Super Rolla Ball
 - [ ] more sounds
 - [ ] credits screen
 
-##Ideas:
+## Ideas:
 - world one: water
 - world two: acid
 - world three: lava
