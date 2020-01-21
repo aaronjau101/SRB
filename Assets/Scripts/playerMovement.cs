@@ -41,6 +41,7 @@ public class playerMovement : MonoBehaviour
             {
                 rb.AddForce(Vector3.up * 5000f * Time.deltaTime);
                 stars.SetActive(true);
+                cc.celebrationDone = true;
             }
         }
         else
@@ -66,6 +67,7 @@ public class playerMovement : MonoBehaviour
     void ReturnToStart()
     {
         cc.DecreaseLives();
+        cc.IncreaseScore(-100);
         rb.Sleep();
         this.transform.position = startingPosition;
         this.transform.rotation = startingRotation;
@@ -84,7 +86,7 @@ public class playerMovement : MonoBehaviour
             if(other.GetComponent<collectibleController>().isCollected == false)
             {
                 other.GetComponent<collectibleController>().isCollected = true;
-                cc.IncreaseScore(50);
+                cc.IncreaseScore(200);
             }  
         }
         if(other.gameObject.tag == "Goal")

@@ -9,6 +9,7 @@ public class canvasController : MonoBehaviour
 
     public GameObject scoreText, timeText, goalFront, goalBack, mainText, livesText, bananasText;
     int score, lives, bananas;
+    public int level;
     public float startTime;
     public float maxTime = 30f;
     public float startDelay = 5.0f;
@@ -16,12 +17,14 @@ public class canvasController : MonoBehaviour
     public bool gameOver = false;
     bool counting = true;
     float timeLeft = 0;
+    bool exitStarted = false;
+    public bool celebrationDone = false;
 
     void Start()
     {
-        score = Globals.score;
-        lives = Globals.lives;
-        bananas = Globals.bananas;
+        score = 0;
+        lives = 3;
+        bananas = 0;
         scoreText.GetComponent<Text>().text = score.ToString();
         livesText.GetComponent<Text>().text = lives.ToString();
         bananasText.GetComponent<Text>().text = bananas.ToString();
@@ -34,7 +37,24 @@ public class canvasController : MonoBehaviour
     {
         if(counting == false)
         {
-            transferPoints();
+            if(timeLeft == 0)
+            {
+                if(celebrationDone && exitStarted == false)
+                {
+                    LevelData L = Globals.levels[level];
+                    if (L.newHighscore(score))
+                    {
+                        Debug.Log("New Highscore!");
+                    }
+                    Invoke("loadLevels", 2f);
+                    exitStarted = true;  
+                }
+            }
+            else
+            {
+                transferPoints();
+            }
+            
             return;
         }
         float time = Time.time - startTime;
@@ -65,10 +85,6 @@ public class canvasController : MonoBehaviour
 
     void transferPoints()
     {
-        if(timeLeft == 0)
-        {
-            return;
-        }
         if (timeLeft > 0.1f)
         {
             timeLeft -= 0.1f;
@@ -80,6 +96,7 @@ public class canvasController : MonoBehaviour
         timeText.GetComponent<Text>().text = scoreboard(timeLeft);
         score += 10;
         scoreText.GetComponent<Text>().text = score.ToString();
+        
     }
 
     void updateTime(float time)
@@ -101,13 +118,17 @@ public class canvasController : MonoBehaviour
     {
         gameOver = true;
         mainText.GetComponent<Text>().text = "GAME OVER";
-        Globals.reset();
-        Invoke("loadMenu", 2f);
+        Invoke("loadLevels", 2f);
     }
 
     void loadMenu()
     {
         SceneManager.LoadScene("menu");
+    }
+
+    void loadLevels()
+    {
+        SceneManager.LoadScene("levelSelect");
     }
 
     public void DecreaseLives()
@@ -130,6 +151,15 @@ public class canvasController : MonoBehaviour
         counting = false;
         timeLeft = maxTime + startDelay - Time.time;
         mainText.GetComponent<Text>().text = "GOAL!";
+        LevelData L = Globals.levels[level];
+        if (L.newBestTime(maxTime - timeLeft))
+        {
+            Debug.Log("New Best Time!");
+        }
+        if (L.newBanana(bananas))
+        {
+            Debug.Log("New Best Bananas!");
+        }
         Destroy(mainText, 3f);
     }
 

@@ -9,8 +9,8 @@ public class Orbit : MonoBehaviour
 
     private Vector3 offset;
 
-    float yOffset = 5.0f;
-    float zOffset = -2.0f;
+    public float yOffset = 5.0f;
+    public float zOffset = -2.0f;
 
     void Start()
     {

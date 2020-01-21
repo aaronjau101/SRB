@@ -6,23 +6,70 @@ using UnityEngine.SceneManagement;
 // Placed in first run script
 public static class Globals
 {
-    public static int score = 0;
-    public static int lives = 3;
-    public static int bananas = 0;
+    public static LevelData[] levels = { new LevelData(), new LevelData(), new LevelData()};
+}
 
-    public static void reset()
+public class LevelData
+{
+    public int score = 0;
+    public float time = Mathf.Infinity;
+    public int bananas = 0;
+
+    public LevelData()
     {
-        score = 0;
-        lives = 0;
-        bananas = 0;
+
+    }
+
+    public bool newHighscore(int newScore)
+    {
+        if(newScore > score)
+        {
+            score = newScore;
+            return true;
+        }
+        else
+        {
+            return false;
+        }
+    }
+
+    public bool newBestTime(float newTime)
+    {
+        if (newTime < time)
+        {
+            time = newTime;
+            return true;
+        }
+        else
+        {
+            return false;
+        }
+    }
+
+    public bool newBanana(int newBananas)
+    {
+        if (newBananas > bananas)
+        {
+            bananas = newBananas;
+            return true;
+        }
+        else
+        {
+            return false;
+        }
     }
 }
 
-    public class mainMenu : MonoBehaviour
+public class mainMenu : MonoBehaviour
 {
-    public void NewGame()
+    public int currentLevel = 0;
+
+    public void LoadLevel()
     {
-        SceneManager.LoadScene("level1");
+        if (currentLevel > 0 && currentLevel < 4)
+        {
+            SceneManager.LoadScene("level" + currentLevel.ToString());
+        }
     }
     public void MainMenu()
     {
@@ -31,5 +78,9 @@ public static class Globals
     public void Help()
     {
         SceneManager.LoadScene("help");
+    }
+    public void LevelSelect()
+    {
+        SceneManager.LoadScene("levelSelect");
     }
 }
