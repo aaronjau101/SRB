@@ -5,15 +5,17 @@ Super Rolla Ball
 - [x] Level Select
 - [x] Second Level
 - [x] Third Level
-- [ ] unlocking levels sequentially
+- [x] unlocking levels sequentially
 - [x] Highscore for each level
 - [x] Best time for each level
 - [x] Best banana count for each level
 - [x] Checkerboard texture for goal flaps
-- [ ] Trophy Notification 
-- [ ] achievement gallery/trophy room
+- [x] Trophy Notification 
+- [x] Record Notification 
+- [ ] Trophy System
+- [ ] Trophy Room
 - [ ] Point rework (time * bananas)
-- [ ] camera comes down to player during "Ready?" message-mouse locked
+- [x] Camera Start Animation
 - [ ] pause
 - [ ] loading levels screen
 - [ ] more sounds
@@ -22,13 +24,8 @@ Super Rolla Ball
 - [ ] fix canvas sizing
 
 ## Ideas:
-- world one: water
-- world two: acid
-- world three: lava
-- w3 will use jump pads
-
 - each world has a certain number of levels
 - goal sphere drops confetti on finish
-- animations for best time, best score, all bananas
-- star ratings in level select
-- settings
+- star ratings in level select 
+- Score under x seconds three stars, etc.
+- settings (display, character select)
