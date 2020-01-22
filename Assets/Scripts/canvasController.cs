@@ -8,6 +8,7 @@ public class canvasController : MonoBehaviour
 {
 
     public GameObject scoreText, timeText, goalFront, goalBack, mainText, livesText, bananasText;
+    public GameObject trophyAlert, recordAlert;
     int score, lives, bananas;
     public int level;
     public float startTime;
@@ -19,6 +20,7 @@ public class canvasController : MonoBehaviour
     float timeLeft = 0;
     bool exitStarted = false;
     public bool celebrationDone = false;
+    List<Coroutine> alerts = new List<Coroutine>();
 
     void Start()
     {
@@ -39,12 +41,12 @@ public class canvasController : MonoBehaviour
         {
             if(timeLeft == 0)
             {
-                if(celebrationDone && exitStarted == false)
+                if(celebrationDone && exitStarted == false && alerts.Count == 0)
                 {
                     LevelData L = Globals.levels[level];
                     if (L.newHighscore(score))
                     {
-                        Debug.Log("New Highscore!");
+                        alerts.Add(StartCoroutine(spawnAlert(recordAlert, "HIGHSCORE", alerts.Count)));
                     }
                     Invoke("loadLevels", 2f);
                     exitStarted = true;  
@@ -72,7 +74,13 @@ public class canvasController : MonoBehaviour
         }
         else if (time - startDelay < maxTime)
         {
-            //Make time red
+            if (Mathf.Floor(time*10) % 2f == 0) { 
+                timeText.GetComponent<Text>().color = new Color(255f, 0f, 0f);
+            }
+            else
+            {
+                timeText.GetComponent<Text>().color = new Color(255f, 255f, 255f);
+            }
             updateTime(maxTime + startDelay - time);
 
         }
@@ -149,18 +157,29 @@ public class canvasController : MonoBehaviour
     public void ShowGoal()
     {
         counting = false;
-        timeLeft = maxTime + startDelay - Time.time;
+        float timeSpent = (Time.time - startTime) - startDelay;
+        timeLeft = maxTime - timeSpent;     
         mainText.GetComponent<Text>().text = "GOAL!";
+
         LevelData L = Globals.levels[level];
-        if (L.newBestTime(maxTime - timeLeft))
+        if (L.newBestTime(timeSpent))
         {
-            Debug.Log("New Best Time!");
+            alerts.Add(StartCoroutine(spawnAlert(recordAlert, "TIME", alerts.Count)));
         }
         if (L.newBanana(bananas))
         {
-            Debug.Log("New Best Bananas!");
+            alerts.Add(StartCoroutine(spawnAlert(recordAlert, "BANANAS", alerts.Count)));
         }
         Destroy(mainText, 3f);
+    }
+
+    IEnumerator spawnAlert(GameObject prefab, string description, int index)
+    {
+        yield return new WaitForSeconds(2.0f * (float)index);
+        GameObject alert = Instantiate(prefab, this.transform) as GameObject;
+        alert.GetComponent<Notification>().setDescription(description);
+        yield return new WaitForSeconds(2.0f * (float)index);
+        alerts.RemoveAt(0);
     }
 
     string scoreboard(float amount)

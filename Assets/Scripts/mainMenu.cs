@@ -14,6 +14,7 @@ public class LevelData
     public int score = 0;
     public float time = Mathf.Infinity;
     public int bananas = 0;
+    public bool blocked = false;
 
     public LevelData()
     {

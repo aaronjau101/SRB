@@ -5,7 +5,7 @@ using UnityEngine.UI;
 
 public class levelSelect : MonoBehaviour
 {
-    public GameObject hsText, btText, bsText;
+    public GameObject hsText, btText, bsText, level1, level2, level3;
 
     // Start is called before the first frame update
     void Start()
@@ -13,6 +13,37 @@ public class levelSelect : MonoBehaviour
         hsText.SetActive(false);
         btText.SetActive(false);
         bsText.SetActive(false);
+        GameObject[] levelButtons = { level1, level2, level3 };
+        for(var i = 1; i < Globals.levels.Length; i++)
+        {
+            LevelData L = Globals.levels[i - 1];
+            if(L.score > 0)
+            {
+                L.blocked = false;
+                GameObject panel = levelButtons[i].gameObject.transform.GetChild(2).gameObject;
+                panel.SetActive(false);
+                Button button = levelButtons[i].gameObject.GetComponent<Button>();
+                button.interactable = true;
+                if (i == 2)
+                {
+                    button.onClick.AddListener(() => { loadLevelData(2); });
+                }
+                else if(i == 1)
+                {
+                    button.onClick.AddListener(() => { loadLevelData(1); });
+                }
+                
+            }
+            else
+            {
+                L.blocked = true;
+                levelButtons[i].gameObject.transform.GetChild(2).gameObject.SetActive(true);
+                Button button = levelButtons[i].gameObject.GetComponent<Button>();
+                button.interactable = false;
+            }
+        }
+        
+
     }
 
     void loadLevelData(int level)

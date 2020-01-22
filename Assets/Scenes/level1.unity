@@ -3034,6 +3034,18 @@ PrefabInstance:
       propertyPath: goalBack
       value: 
       objectReference: {fileID: 126857174}
+    - target: {fileID: 8276554310042102775, guid: 4dbc20ffea58fee4e80fbacda1b2a655,
+        type: 3}
+      propertyPath: trophyAlert
+      value: 
+      objectReference: {fileID: 4968998839873004652, guid: 7686da2cc234c184e8d1211a2ff73121,
+        type: 3}
+    - target: {fileID: 8276554310042102775, guid: 4dbc20ffea58fee4e80fbacda1b2a655,
+        type: 3}
+      propertyPath: recordAlert
+      value: 
+      objectReference: {fileID: 7274468740603250154, guid: 56d33a7e9c348bb4982fe08b51b24a67,
+        type: 3}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 4dbc20ffea58fee4e80fbacda1b2a655, type: 3}
 --- !u!1001 &8677936096535406627
@@ -3118,5 +3130,10 @@ PrefabInstance:
       propertyPath: yOffset
       value: 4.5
       objectReference: {fileID: 0}
+    - target: {fileID: 8677936094963429327, guid: 00f06eeb0d2ad7648ac095e9422028c2,
+        type: 3}
+      propertyPath: cc
+      value: 
+      objectReference: {fileID: 1597645894}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 00f06eeb0d2ad7648ac095e9422028c2, type: 3}
