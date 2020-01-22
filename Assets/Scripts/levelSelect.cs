@@ -37,6 +37,11 @@ public class levelSelect : MonoBehaviour
         loadLevelData(1);
     }
 
+    public void Level3()
+    {
+        loadLevelData(2);
+    }
+
     string scoreboard(float amount)
     {
         if (amount >= 100 || amount <= 0)

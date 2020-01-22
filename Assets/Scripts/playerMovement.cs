@@ -81,26 +81,30 @@ public class playerMovement : MonoBehaviour
 
     private void OnTriggerEnter(Collider other)
     {
-        if(other.gameObject.tag == "Collectible")
+        if (other.gameObject.tag == "Collectible")
         {
-            if(other.GetComponent<collectibleController>().isCollected == false)
+            if (other.GetComponent<collectibleController>().isCollected == false)
             {
                 other.GetComponent<collectibleController>().isCollected = true;
                 cc.IncreaseScore(200);
-            }  
+            }
         }
-        if(other.gameObject.tag == "Goal")
+        if (other.gameObject.tag == "Goal")
         {
             int number = 0;
             int.TryParse(other.gameObject.name, out number);
             goalCollisions += number;
-            if(goalCollisions == 6)
+            if (goalCollisions == 6)
             {
                 cc.ShowGoal();
                 switchCamera();
                 finishTime = Time.time;
                 Invoke("setFinished", 0.5f);
             }
+        }
+        if (other.gameObject.tag == "Launch")
+        {
+            rb.AddForce(other.GetComponent<launch>().launchForce * Vector3.up);
         }
     }
 
