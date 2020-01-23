@@ -12,9 +12,9 @@ Super Rolla Ball
 - [x] Checkerboard texture for goal flaps
 - [x] Trophy Notification 
 - [x] Record Notification 
-- [ ] Trophy System
+- [x] Trophy System
 - [ ] Trophy Room
-- [ ] Point rework (time * bananas)
+- [x] Point rework (time * bananas)
 - [x] Camera Start Animation
 - [ ] pause
 - [ ] loading levels screen
