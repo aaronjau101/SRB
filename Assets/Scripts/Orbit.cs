@@ -8,31 +8,30 @@ public class Orbit : MonoBehaviour
     public Transform player;
     public canvasController cc;
 
-    private Vector3 offset;
-    private Vector3 rotation;
-    float yOffset = 4.5f;
-    float zOffset = -8.0f;
+    private Vector3 offset = new Vector3(0, 4.5f, -8.0f);
+    private Vector3 startRotation = new Vector3(29.358f, 0, 0);
 
-    float t;
-    Vector3 startPosition;
-    Vector3 target;
+    private Vector3 startPosition;
+    private Vector3 target;
+
     float timeToReachTarget;
+    float t = 0;
 
     void Start()
     {
-        t = 0;
-        offset = new Vector3(0, yOffset, zOffset);
-        rotation = new Vector3(29.358f, 0, 0);
-        this.transform.eulerAngles = rotation;
+        //define initial values
+        timeToReachTarget = cc.startDuration;
         target = player.position + offset;
-        timeToReachTarget = cc.startDelay;
         startPosition = target + (Vector3.up * 50f);
+        //set the camera's transform
         this.transform.position = startPosition;
+        this.transform.eulerAngles = startRotation;
     }
 
     void Update()
     {
-        if (Time.time - cc.startTime < cc.startDelay)
+        //move camera down during start
+        if (cc.state == "start")
         {
             t += Time.deltaTime / timeToReachTarget;
             transform.position = Vector3.Lerp(startPosition, target, t);
@@ -41,12 +40,9 @@ public class Orbit : MonoBehaviour
 
     void LateUpdate()
     {
-        if (Time.time - cc.startTime < cc.startDelay)
-        {
-            return;
-        }
-        else
-        {
+        //Only allow camera to orbit when playing
+        if (cc.state == "play")
+        { 
             offset = Quaternion.AngleAxis(Input.GetAxis("Mouse X") * turnSpeed, Vector3.up) * offset;
             transform.position = player.position + offset;
             transform.LookAt(player.position);

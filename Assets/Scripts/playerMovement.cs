@@ -4,59 +4,60 @@ using UnityEngine;
 
 public class playerMovement : MonoBehaviour
 {
-    Rigidbody rb;
-    float moveSpeed;
-    public canvasController cc;
-    Vector3 startingPosition;
-    Quaternion startingRotation;
-    int goalCollisions;
-    bool finished;
+    //GameObjects needed to be placed in inspector
     public GameObject mainCamera, goalCamera, stars;
-    float finishTime, celebrationDelay = 3f;
-    // Start is called before the first frame update
+    public canvasController cc;
+    
+    //General variables
+    Quaternion startingRotation;
+    Vector3 startingPosition;
+    Rigidbody rb;
+    float moveSpeed = 1000f;
+
+    //Integer to track Goal collision
+    int goalCollisions = 0;
+    
     void Start()
     {
         rb = this.GetComponent<Rigidbody>();
         startingPosition = this.transform.position;
         startingRotation = this.transform.rotation;
-        goalCollisions = 0;
-        moveSpeed = 1000f;
-        finished = false;
     }
 
-    // Update is called once per frame
     void Update()
     {
-        if (cc.gameOver || Time.time - cc.startTime < cc.startDelay)
+        //Dont move if starting or game is over
+        if (cc.state == "start" || cc.state =="gameOver")
         {
             rb.Sleep();
         }
-        else if (finished)
+        //Slow down speed during celebration
+        else if (cc.state == "celebrate")
         {
-            if (Time.time - finishTime < celebrationDelay)
+            rb.velocity = rb.velocity * 0.9f;
+        }
+        //Turn on stars and fly upwards
+        else if (cc.state == "takeoff")
+        {
+            rb.AddForce(Vector3.up * 5000f * Time.deltaTime);
+            if (stars.activeInHierarchy == false)
             {
-                rb.velocity = rb.velocity * 0.99f * Time.deltaTime;
-            }
-            else
-            {
-                rb.AddForce(Vector3.up * 5000f * Time.deltaTime);
                 stars.SetActive(true);
-                cc.celebrationDone = true;
             }
         }
-        else
+        //Logic for playing the game
+        else if(cc.state == "play")
         {
+            //Move using input and camera direction
             float hdir = Input.GetAxisRaw("Horizontal");
             float vdir = Input.GetAxisRaw("Vertical");
             Vector3 inputDirection = new Vector3(hdir, 0, vdir);
             Vector3 trueDirection = Camera.main.transform.TransformDirection(inputDirection);
             trueDirection.y = 0.0f;
-
             Vector3 norm = trueDirection.normalized;
-
             Vector3 force = norm * moveSpeed * Time.deltaTime;
             rb.AddForce(force);
-
+            //Reset player if falls off the map
             if (this.transform.position.y < -15f)
             {
                 ReturnToStart();
@@ -64,29 +65,31 @@ public class playerMovement : MonoBehaviour
         }
     }
 
+    //Function for resting when falling off the map
     void ReturnToStart()
     {
         cc.DecreaseLives();
-        cc.IncreaseScore(-100);
         rb.Sleep();
         this.transform.position = startingPosition;
         this.transform.rotation = startingRotation;
     }
 
+    //Function to switch to goal camera when celebrating
     void switchCamera()
     {
         mainCamera.SetActive(false);
         goalCamera.SetActive(true);
     }
 
+    //Functions for trigger collision
     private void OnTriggerEnter(Collider other)
     {
-        if (other.gameObject.tag == "Collectible")
+        if (other.gameObject.tag == "Collectible" && cc.state != "takeoff")
         {
             if (other.GetComponent<collectibleController>().isCollected == false)
             {
                 other.GetComponent<collectibleController>().isCollected = true;
-                cc.IncreaseScore(200);
+                cc.eatBanana(200, 1);
             }
         }
         if (other.gameObject.tag == "Goal")
@@ -98,8 +101,6 @@ public class playerMovement : MonoBehaviour
             {
                 cc.ShowGoal();
                 switchCamera();
-                finishTime = Time.time;
-                Invoke("setFinished", 0.5f);
             }
         }
         if (other.gameObject.tag == "Launch")
@@ -116,10 +117,5 @@ public class playerMovement : MonoBehaviour
             int.TryParse(other.gameObject.name, out number);
             goalCollisions -= number;
         }
-    }
-
-    void setFinished()
-    {
-        finished = true;
     }
 }
