@@ -21,7 +21,7 @@ Super Rolla Ball
 - [x] more sounds
 - [ ] credits screen
 - [ ] webgl build
-- [ ] fix canvas sizing
+- [x] fix canvas sizing
 
 ## Ideas:
 - each world has a certain number of levels
