@@ -16,9 +16,9 @@ Super Rolla Ball
 - [ ] Trophy Room
 - [x] Point rework (time * bananas)
 - [x] Camera Start Animation
-- [ ] pause
-- [ ] loading levels screen
-- [ ] more sounds
+- [x] pause
+- [x] loading levels screen
+- [x] more sounds
 - [ ] credits screen
 - [ ] webgl build
 - [ ] fix canvas sizing
