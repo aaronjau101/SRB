@@ -128,7 +128,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 017faa0616df2ae4c90a69b6ff76f6bc, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  moveSpeed: 1000
+  mainCamera: {fileID: 0}
+  goalCamera: {fileID: 0}
+  stars: {fileID: 0}
+  loseLifeAudio: {fileID: 0}
+  gameOverAudio: {fileID: 0}
+  cc: {fileID: 0}
 --- !u!1 &3633246246058502692
 GameObject:
   m_ObjectHideFlags: 0

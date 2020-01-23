@@ -47,5 +47,10 @@ public class Orbit : MonoBehaviour
             transform.position = player.position + offset;
             transform.LookAt(player.position);
         }
+        if(cc.state == "gameOver")
+        {
+            transform.position = player.position + offset;
+            transform.LookAt(player.position);
+        }
     }
 }

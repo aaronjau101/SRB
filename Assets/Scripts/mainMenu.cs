@@ -1,12 +1,13 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 using UnityEngine.SceneManagement;
 
 // Global Variables
 public static class Globals
 {
-    public static int currentLevel = 0;
+    public static int currentLevel = -1;
 
     public static LevelData[] levels = 
     {
@@ -37,7 +38,10 @@ public static class Globals
         new Trophy("Level 2 Hard Score"),
         new Trophy("Level 3 Easy Score"),
         new Trophy("Level 3 Medium Score"),
-        new Trophy("Level 3 Hard Score")
+        new Trophy("Level 3 Hard Score"),
+        new Trophy("Level 1 All Bananas"),
+        new Trophy("Level 2 All Bananas"),
+        new Trophy("Level 3 All Bananas")
     };
 }
 
@@ -133,18 +137,7 @@ public class LevelData
 
 //Functions to load scenes
 public class mainMenu : MonoBehaviour
-{ 
-    public void LoadLevel()
-    {
-        if (Globals.currentLevel > 0 && Globals.currentLevel < 4)
-        {
-            SceneManager.LoadScene("level" + Globals.currentLevel.ToString());
-        }
-    }
-    public void MainMenu()
-    {
-        SceneManager.LoadScene("menu");
-    }
+{
     public void Help()
     {
         SceneManager.LoadScene("help");

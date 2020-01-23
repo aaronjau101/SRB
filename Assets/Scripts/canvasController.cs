@@ -3,13 +3,15 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.SceneManagement;
+using System.Globalization;
 
 public class canvasController : MonoBehaviour
 {
 
     public GameObject scoreText, timeText, goalFront, goalBack;
-    public GameObject mainText, livesText, bananasText, winUI, totalScoreText;
+    public GameObject mainText, livesText, bananasText, winUI, totalScoreText, pauseUI;
     public GameObject trophyAlert, recordAlert;
+    public AudioSource loseLifeAudio, gameOverAudio;
 
     //Current attempt's information
     int totalScore = 0;
@@ -27,12 +29,13 @@ public class canvasController : MonoBehaviour
 
     //General Information
     public float startDuration = 5f; //Orbit.cs needs to know it for camera animation
-    float warningDuration = 3f;
+    float warningDuration = 5f;
     float celebrateDuration = 2f;
     float deathDuration = 2f;
 
     //Array for notification alerts
-    List<Coroutine> alerts = new List<Coroutine>();
+    List<Coroutine> recordAlerts = new List<Coroutine>();
+    List<Coroutine> trophyAlerts = new List<Coroutine>();
 
     void Start()
     {
@@ -75,14 +78,17 @@ public class canvasController : MonoBehaviour
                 if(timeLeft < warningDuration && flashing == false)
                 {
                     flashing = true;
-                    StartCoroutine("flashTimeColor");
+                    StartCoroutine(flashTimeColor());
                 }
                 break;
 
             case "takeoff":
                 if (totalScore == 0)
                 {
-                    int subscore = score + Mathf.FloorToInt((finishTime - startTime) - startDuration);
+                    float timeOnClock = maxTime - (finishTime - startTime - startDuration);
+                    int timeScore = Mathf.FloorToInt(timeOnClock * 100);
+
+                    int subscore = score + timeScore;
                     int multiplier = lives + bananas;
                     totalScore = subscore * multiplier;
                     totalScoreText.GetComponent<Text>().text = totalScore.ToString();
@@ -90,10 +96,10 @@ public class canvasController : MonoBehaviour
                     LevelData L = Globals.levels[level];
                     if (L.newHighscore(totalScore))
                     {
-                        alerts.Add(StartCoroutine(spawnAlert(recordAlert, "HIGHSCORE", alerts.Count)));
+                        recordAlerts.Add(StartCoroutine(spawnAlert(recordAlert, "HIGHSCORE", recordAlerts)));
                     }
-                }
-                
+                    checkScoreTrophies(totalScore);
+                } 
                 break;
 
             default:
@@ -124,11 +130,18 @@ public class canvasController : MonoBehaviour
                     mainText.GetComponent<Text>().text = "GAME OVER";
                     finishTime = Time.time;
                 }
+                //Pause game if P is pressed
+                if (Input.GetKeyDown(KeyCode.P))
+                {
+                    Time.timeScale = 0;
+                    state = "pause";
+                    pauseUI.SetActive(true);
+                }
                 break;
 
             case "gameOver":
                 //If death duration is over and no more alerts, then return to levelSelect
-                if(Time.time - finishTime < deathDuration && alerts.Count == 0)
+                if(Time.time - finishTime > deathDuration && recordAlerts.Count == 0 && trophyAlerts.Count == 0)
                 {
                     SceneManager.LoadScene("levelSelect");
                 }
@@ -139,6 +152,16 @@ public class canvasController : MonoBehaviour
                 {
                     state = "takeoff";
                     mainText.GetComponent<Text>().text = "";
+                }
+                break;
+
+            case "pause":
+                //Unpause game if P is pressed
+                if (Input.GetKeyDown(KeyCode.P))
+                {
+                    Time.timeScale = 1;
+                    state = "play";
+                    pauseUI.SetActive(false);
                 }
                 break;
 
@@ -160,9 +183,10 @@ public class canvasController : MonoBehaviour
     {
         while (state == "play")
         {
-            timeText.GetComponent<Text>().color = new Color(255f, 0f, 0f);
+            timeText.GetComponent<Text>().color = new Color(255f, 0, 0);
             yield return new WaitForSeconds(0.2f);
-            timeText.GetComponent<Text>().color = new Color(255f, 255f, 255f);
+            timeText.GetComponent<Text>().color = new Color(0, 0, 0);
+            yield return new WaitForSeconds(0.2f);
         }
     }
 
@@ -181,6 +205,16 @@ public class canvasController : MonoBehaviour
         bananas += bananaAmount;
         scoreText.GetComponent<Text>().text = score.ToString();
         bananasText.GetComponent<Text>().text = bananas.ToString();
+        LevelData L = Globals.levels[level];
+        if (bananas == L.maxBananas)
+        {
+            Trophy t = findTrophy("Level " + (level + 1).ToString() + " All Bananas");
+            if (t != null && t.unlocked == false)
+            {
+                t.unlocked = true;
+                trophyAlerts.Add(StartCoroutine(spawnAlert(trophyAlert, "ALL NANAS", trophyAlerts)));
+            }
+        }
     }
 
     //Function decreases lives and score
@@ -189,15 +223,18 @@ public class canvasController : MonoBehaviour
         lives -= 1;
         score -= 100;
         scoreText.GetComponent<Text>().text = score.ToString();
+        livesText.GetComponent<Text>().text = lives.ToString();
 
-        if (lives < 0)
+        if (lives <= 0)
         {
             state = "gameOver";
+            mainText.GetComponent<Text>().text = "GAME OVER";
             finishTime = Time.time;
+            gameOverAudio.Play();
         }
         else
-        {
-            livesText.GetComponent<Text>().text = lives.ToString();
+        { 
+            loseLifeAudio.Play();
         }
     }
 
@@ -207,30 +244,103 @@ public class canvasController : MonoBehaviour
         //Transition stuff
         state = "celebrate";
         finishTime = Time.time;
+        float timeSpent = finishTime - startTime - startDuration;
+        float timeLeft = maxTime - timeSpent;
+        updateTime(timeLeft);
         mainText.GetComponent<Text>().text = "GOAL!";
         //Global data update and spawn alerts
-        float timeSpent = (Time.time - startTime) - startDuration;
+        
         LevelData L = Globals.levels[level];
-        L.completed = true;
+        if(L.completed == false)
+        {
+            L.completed = true;
+            Trophy t = findTrophy("Level " + (level + 1).ToString() + " Completed");
+            if(t != null && t.unlocked == false)
+            {
+                t.unlocked = true;
+                trophyAlerts.Add(StartCoroutine(spawnAlert(trophyAlert, "ANY TIME", trophyAlerts)));
+            }
+        }
         if (L.newBestTime(timeSpent))
         {
-            alerts.Add(StartCoroutine(spawnAlert(recordAlert, "TIME", alerts.Count)));
+            recordAlerts.Add(StartCoroutine(spawnAlert(recordAlert, "TIME", recordAlerts)));
         }
         if (L.newBanana(bananas))
         {
-            alerts.Add(StartCoroutine(spawnAlert(recordAlert, "BANANAS", alerts.Count)));
+            recordAlerts.Add(StartCoroutine(spawnAlert(recordAlert, "BANANAS", recordAlerts)));
+
         }
-        
+        checkTimeTrophies(timeSpent);
+    }
+
+    void checkTimeTrophies(float time)
+    {
+        LevelData L = Globals.levels[level];
+        float[] times = { L.easyTime, L.mediumTime, L.hardTime };
+        string[] difficulties = { "Easy", "Medium", "Hard" };
+        for (var i = 0; i < 3; i++)
+        {
+            if (time < times[0])
+            {
+                string tName = "Level " + (level + 1).ToString() + " " + difficulties[i] +" Time";
+                Trophy t = findTrophy(tName);
+                if (t != null && t.unlocked == false)
+                {
+                    t.unlocked = true;
+                    string alertName = difficulties[i].ToUpper(new CultureInfo("en-US", false)) + " TIME";
+                    trophyAlerts.Add(StartCoroutine(spawnAlert(trophyAlert, alertName, trophyAlerts)));
+                }
+            }
+
+        }
+
+    }
+
+    void checkScoreTrophies(float score)
+    {
+        LevelData L = Globals.levels[level];
+        float[] scores = { L.easyScore, L.mediumScore, L.hardScore };
+        string[] difficulties = { "Easy", "Medium", "Hard" };
+        for (var i = 0; i < 3; i++)
+        {
+            if (score > scores[0])
+            {
+                string tName = "Level " + (level + 1).ToString() + " " + difficulties[i] + " Score";
+                Trophy t = findTrophy(tName);
+                if (t != null && t.unlocked == false)
+                {
+                    t.unlocked = true;
+                    string alertName = difficulties[i].ToUpper(new CultureInfo("en-US", false)) + " SCORE";
+                    trophyAlerts.Add(StartCoroutine(spawnAlert(trophyAlert, alertName, trophyAlerts)));
+                }
+            }
+
+        }
+
+    }
+
+    Trophy findTrophy(string description)
+    {
+        for(var i = 0; i < Globals.trophies.Length; i++)
+        {
+            if(Globals.trophies[i].description == description)
+            {
+                return Globals.trophies[i];
+            }
+        }
+
+        return null;
     }
 
     //Coroutine spawn a notification
-    IEnumerator spawnAlert(GameObject prefab, string description, int index)
+    IEnumerator spawnAlert(GameObject prefab, string description, List<Coroutine> list)
     {
+        int index = list.Count;
         yield return new WaitForSeconds(2.0f * (float)index);
         GameObject alert = Instantiate(prefab, this.transform) as GameObject;
         alert.GetComponent<Notification>().setDescription(description);
         yield return new WaitForSeconds(2.0f * (float)index);
-        alerts.RemoveAt(0);
+        list.RemoveAt(0);
     }
 
     string scoreboard(float amount)
