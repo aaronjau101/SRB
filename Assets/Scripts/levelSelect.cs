@@ -112,9 +112,15 @@ public class levelSelect : MonoBehaviour
             StartCoroutine(LoadAsynchronously(levelName));
         }
     }
+
     public void MainMenu()
     {
         SceneManager.LoadScene("menu");
+    }
+
+    public void TrophyRoom()
+    {
+        SceneManager.LoadScene("trophyRoom");
     }
 
     IEnumerator LoadAsynchronously(string levelName)

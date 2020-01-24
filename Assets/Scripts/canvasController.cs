@@ -280,7 +280,7 @@ public class canvasController : MonoBehaviour
         string[] difficulties = { "Easy", "Medium", "Hard" };
         for (var i = 0; i < 3; i++)
         {
-            if (time < times[0])
+            if (time < times[i])
             {
                 string tName = "Level " + (level + 1).ToString() + " " + difficulties[i] +" Time";
                 Trophy t = findTrophy(tName);
@@ -303,14 +303,14 @@ public class canvasController : MonoBehaviour
         string[] difficulties = { "Easy", "Medium", "Hard" };
         for (var i = 0; i < 3; i++)
         {
-            if (score > scores[0])
+            if (score > scores[i])
             {
                 string tName = "Level " + (level + 1).ToString() + " " + difficulties[i] + " Score";
                 Trophy t = findTrophy(tName);
                 if (t != null && t.unlocked == false)
                 {
                     t.unlocked = true;
-                    string alertName = difficulties[i].ToUpper(new CultureInfo("en-US", false)) + " SCORE";
+                    string alertName = difficulties[i].ToUpper() + " SCORE";
                     trophyAlerts.Add(StartCoroutine(spawnAlert(trophyAlert, alertName, trophyAlerts)));
                 }
             }

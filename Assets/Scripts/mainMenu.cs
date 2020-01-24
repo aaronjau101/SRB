@@ -11,9 +11,9 @@ public static class Globals
 
     public static LevelData[] levels = 
     {
-        new LevelData(16, 30, 10, 5, 3, 1000, 2000, 3000),
-        new LevelData(16, 60, 30, 15, 10, 1000, 2000, 3000),
-        new LevelData(16, 60, 10, 5, 3, 1000, 2000, 3000)
+        new LevelData(16, 30, 10, 5, 3, 30000, 60000, 80000),
+        new LevelData(16, 60, 30, 15, 10, 3000, 6000, 8000),
+        new LevelData(16, 90, 15, 30, 60, 3000, 7000, 10000)
     };
 
     public static Trophy[] trophies =
