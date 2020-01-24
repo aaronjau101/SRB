@@ -8,7 +8,7 @@ using UnityEngine.SceneManagement;
 public class trophyRoom : MonoBehaviour
 {
 
-    public GameObject trophyText, bananaTrophy, scoreTrophy, timeTrophy, noTrophy;
+    public GameObject trophyText, percentageText, bananaTrophy, scoreTrophy, timeTrophy, noTrophy;
 
     GameObject currentTrophy;
     int index = 0;
@@ -20,6 +20,22 @@ public class trophyRoom : MonoBehaviour
     {
         currentTrophy = newTrophy(Vector3.zero);
         StartCoroutine(updateDescription(0));
+
+        float trophyPercentage = Mathf.Floor((getTrophiesUnlocked() / (float)Globals.trophies.Length) * 100);
+        percentageText.GetComponent<Text>().text = trophyPercentage.ToString() + "%";
+    }
+
+    float getTrophiesUnlocked ()
+    {
+        float count = 0;
+        for (var i = 0; i < Globals.trophies.Length; i++)
+        {
+            if(Globals.trophies[i].unlocked)
+            {
+                count += 1;
+            }
+        }
+        return count;
     }
 
     IEnumerator updateDescription(float delay)

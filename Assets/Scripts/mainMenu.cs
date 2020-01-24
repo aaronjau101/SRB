@@ -12,8 +12,8 @@ public static class Globals
     public static LevelData[] levels = 
     {
         new LevelData(16, 30, 10, 5, 3, 30000, 60000, 80000),
-        new LevelData(16, 60, 30, 15, 10, 3000, 6000, 8000),
-        new LevelData(16, 90, 15, 30, 60, 3000, 7000, 10000)
+        new LevelData(16, 60, 30, 15, 10, 30000, 60000, 80000),
+        new LevelData(16, 90, 15, 30, 60, 30000, 70000, 100000)
     };
 
     public static Trophy[] trophies =
@@ -146,4 +146,13 @@ public class mainMenu : MonoBehaviour
     {
         SceneManager.LoadScene("levelSelect");
     }
+    public void MainMenu()
+    {
+        SceneManager.LoadScene("menu");
+    }
+    public void Credits()
+    {
+        SceneManager.LoadScene("credits");
+    }
+
 }

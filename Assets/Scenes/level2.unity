@@ -2285,6 +2285,16 @@ PrefabInstance:
       propertyPath: goalBack
       value: 
       objectReference: {fileID: 1603357768}
+    - target: {fileID: 1138962338776650314, guid: 6707cd56c5c0e9b41bea515c0a8f7d8a,
+        type: 3}
+      propertyPath: endUI
+      value: 
+      objectReference: {fileID: 1202376215}
+    - target: {fileID: 1138962338776650314, guid: 6707cd56c5c0e9b41bea515c0a8f7d8a,
+        type: 3}
+      propertyPath: totalScoreTitle
+      value: 
+      objectReference: {fileID: 1202376214}
     - target: {fileID: 1138962338776650317, guid: 6707cd56c5c0e9b41bea515c0a8f7d8a,
         type: 3}
       propertyPath: m_Name
@@ -2312,6 +2322,18 @@ PrefabInstance:
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 6707cd56c5c0e9b41bea515c0a8f7d8a, type: 3}
+--- !u!1 &1202376214 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 3418864317013065891, guid: 6707cd56c5c0e9b41bea515c0a8f7d8a,
+    type: 3}
+  m_PrefabInstance: {fileID: 1202376213}
+  m_PrefabAsset: {fileID: 0}
+--- !u!1 &1202376215 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 8925247600203263580, guid: 6707cd56c5c0e9b41bea515c0a8f7d8a,
+    type: 3}
+  m_PrefabInstance: {fileID: 1202376213}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1001 &1228686666
 PrefabInstance:
   m_ObjectHideFlags: 0

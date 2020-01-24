@@ -9,9 +9,10 @@ public class canvasController : MonoBehaviour
 {
 
     public GameObject scoreText, timeText, goalFront, goalBack;
-    public GameObject mainText, livesText, bananasText, winUI, totalScoreText, pauseUI;
+    public GameObject mainText, livesText, bananasText;
+    public GameObject endUI, totalScoreText, totalScoreTitle;
     public GameObject trophyAlert, recordAlert;
-    public AudioSource loseLifeAudio, gameOverAudio;
+    public AudioSource loseLifeAudio, gameOverAudio, goalAudio;
 
     //Current attempt's information
     int totalScore = 0;
@@ -39,6 +40,7 @@ public class canvasController : MonoBehaviour
 
     void Start()
     {
+        Time.timeScale = 1;
         //Obtain global information
         level = Globals.currentLevel;
         LevelData L = Globals.levels[level];
@@ -53,6 +55,9 @@ public class canvasController : MonoBehaviour
 
         //Begin the timer
         startTime = Time.time;
+
+        //Lock the cursor
+        Cursor.lockState = CursorLockMode.Locked;
     }
 
     void Update()
@@ -92,7 +97,8 @@ public class canvasController : MonoBehaviour
                     int multiplier = lives + bananas;
                     totalScore = subscore * multiplier;
                     totalScoreText.GetComponent<Text>().text = totalScore.ToString();
-                    winUI.SetActive(true);
+                    endUI.SetActive(true);
+                    Cursor.lockState = CursorLockMode.None;
                     LevelData L = Globals.levels[level];
                     if (L.newHighscore(totalScore))
                     {
@@ -135,15 +141,22 @@ public class canvasController : MonoBehaviour
                 {
                     Time.timeScale = 0;
                     state = "pause";
-                    pauseUI.SetActive(true);
+                    totalScoreText.GetComponent<Text>().text = "";
+                    totalScoreTitle.GetComponent<Text>().text = "PAUSED";
+                    endUI.SetActive(true);
+                    Cursor.lockState = CursorLockMode.None;
                 }
                 break;
 
             case "gameOver":
                 //If death duration is over and no more alerts, then return to levelSelect
-                if(Time.time - finishTime > deathDuration && recordAlerts.Count == 0 && trophyAlerts.Count == 0)
+                if(Time.time - finishTime > deathDuration)
                 {
-                    SceneManager.LoadScene("levelSelect");
+                    mainText.GetComponent<Text>().text = "";
+                    totalScoreText.GetComponent<Text>().text = "";
+                    totalScoreTitle.GetComponent<Text>().text = "";
+                    endUI.SetActive(true);
+                    Cursor.lockState = CursorLockMode.None;
                 }
                 break;
 
@@ -161,7 +174,8 @@ public class canvasController : MonoBehaviour
                 {
                     Time.timeScale = 1;
                     state = "play";
-                    pauseUI.SetActive(false);
+                    Cursor.lockState = CursorLockMode.Locked;
+                    endUI.SetActive(false);
                 }
                 break;
 
@@ -248,6 +262,7 @@ public class canvasController : MonoBehaviour
         float timeLeft = maxTime - timeSpent;
         updateTime(timeLeft);
         mainText.GetComponent<Text>().text = "GOAL!";
+        goalAudio.Play();
         //Global data update and spawn alerts
         
         LevelData L = Globals.levels[level];
@@ -273,6 +288,7 @@ public class canvasController : MonoBehaviour
         checkTimeTrophies(timeSpent);
     }
 
+    //Functions to check for trophy completion
     void checkTimeTrophies(float time)
     {
         LevelData L = Globals.levels[level];
@@ -343,6 +359,7 @@ public class canvasController : MonoBehaviour
         list.RemoveAt(0);
     }
 
+    //Function to convert time to good looking string 00:00
     string scoreboard(float amount)
     {
         if(amount >= 100 || amount <= 0)
@@ -359,6 +376,7 @@ public class canvasController : MonoBehaviour
         return result;
     }
 
+    //Function to load scenes
     public void loadLevels()
     {
         SceneManager.LoadScene("levelSelect");
