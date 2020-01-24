@@ -13,13 +13,12 @@ Super Rolla Ball
 - [x] Trophy Notification 
 - [x] Record Notification 
 - [x] Trophy System
-- [ ] Trophy Room
+- [x] Trophy Room
 - [x] Point rework (time * bananas)
 - [x] Camera Start Animation
 - [x] pause
 - [x] loading levels screen
 - [x] more sounds
-- [ ] credits screen
 - [ ] webgl build
 - [x] fix canvas sizing
 
