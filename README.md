@@ -19,7 +19,7 @@ Super Rolla Ball
 - [x] pause
 - [x] loading levels screen
 - [x] more sounds
-- [ ] webgl build
+- [x] webgl build
 - [x] fix canvas sizing
 
 ## Ideas:
