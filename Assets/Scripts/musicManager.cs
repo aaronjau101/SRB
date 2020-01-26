@@ -12,7 +12,7 @@ public class musicManager : MonoBehaviour
     void Start()
     {
         songs = GetComponents<AudioSource>();
-        songs[index].Play();
+        //songs[index].Play();
     }
 
     // When song ends, Play next song
